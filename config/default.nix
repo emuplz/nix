@@ -13,8 +13,8 @@ _: {
 
     # Editor
     ./plugins/editor/treesitter.nix
-    #./plugins/editor/todo-comments.nix
-    #./plugins/editor/flash.nix
+    ./plugins/editor/todo-comments.nix
+    ./plugins/editor/flash.nix
 
     # LSP
     ./plugins/lsp/lsp.nix
