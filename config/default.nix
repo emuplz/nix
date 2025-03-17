@@ -22,10 +22,10 @@ _: {
 
     # Git
     ./plugins/git/neogit.nix
-    #./plugins/git/gitsigns.nix
+    ./plugins/git/gitsigns.nix
 
     # Utils
-    #./plugins/utils/overseer.nix
+    ./plugins/utils/overseer.nix
     ./plugins/utils/telescope.nix
     ./plugins/utils/whichkey.nix
   ];
