@@ -1,5 +1,5 @@
 {
-  description = "A nixvim configuration";
+  description = "A nixvim configuration with shells";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
@@ -20,27 +20,26 @@
       perSystem =
         { system, pkgs, ... }:
         let
-          nixvimLib = nixvim.lib.${system};
-          nixvim' = nixvim.legacyPackages.${system};
-          nixvimModule = {
-            inherit system; # or alternatively, set `pkgs`
-            module = import ./config; # import the module directly
-            # You can use `extraSpecialArgs` to pass additional arguments to your module files
-            extraSpecialArgs = {
-              # inherit (inputs) foo;
-            };
-          };
-          nvim = nixvim'.makeNixvimWithModule nixvimModule;
+          nvim = pkgs.callPackage ./pkgs/nvim { inherit nixvim system; };
         in
         {
-          checks = {
-            # Run `nix flake check .` to verify that your config is not broken
-            default = nixvimLib.check.mkTestDerivationFromNixvimModule nixvimModule;
-          };
-
           packages = {
-            # Lets you run `nix run .` to start nixvim
-            default = nvim;
+            nvim = nvim.package;
+          };
+          checks = {
+            default = nvim.check;  # Run with `nix flake check`
+          };
+          devShells = {
+	    default = pkgs.mkShell {
+	      buildInputs = [
+			pkgs.ripgrep
+			pkgs.fd
+			nvim.package
+			pkgs.binsider
+	      ] ++ (if pkgs.lib.hasSuffix "-linux" system then [
+            		pkgs.gef
+              ] else []);
+	  };
           };
         };
     };
