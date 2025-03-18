@@ -13,8 +13,9 @@ _: {
 
     # Editor
     ./plugins/editor/treesitter.nix
-    #./plugins/editor/todo-comments.nix
-    #./plugins/editor/flash.nix
+    ./plugins/editor/todo-comments.nix
+    ./plugins/editor/flash.nix
+    ./plugins/editor/autopairs.nix
 
     # LSP
     ./plugins/lsp/lsp.nix
@@ -22,10 +23,11 @@ _: {
 
     # Git
     ./plugins/git/neogit.nix
-    #./plugins/git/gitsigns.nix
+    ./plugins/git/gitsigns.nix
+    ./plugins/git/diffview.nix
 
     # Utils
-    #./plugins/utils/overseer.nix
+    ./plugins/utils/overseer.nix
     ./plugins/utils/telescope.nix
     ./plugins/utils/whichkey.nix
   ];
