@@ -1,12 +1,15 @@
 # packages/nvim/default.nix
-{ nixvim, system }:
+{ nixvim, system, inputs }:
 
 let
   nixvimLib = nixvim.lib.${system};
   nixvim' = nixvim.legacyPackages.${system};
   nixvimModule = {
     inherit system;
-    module = import ./config;  # Refers to packages/nvim/config
+    module = {
+      imports = [ ./config ];
+      package = inputs.neovim-nightly-overlay.packages.${system}.default;
+    };
     extraSpecialArgs = {};
   };
 in

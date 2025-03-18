@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
     nixvim.url = "github:nix-community/nixvim";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
@@ -20,7 +21,7 @@
       perSystem =
         { system, pkgs, ... }:
         let
-          nvim = pkgs.callPackage ./pkgs/nvim { inherit nixvim system; };
+          nvim = pkgs.callPackage ./pkgs/nvim { inherit nixvim system inputs; };
         in
         {
           packages = {
