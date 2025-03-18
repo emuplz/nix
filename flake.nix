@@ -30,7 +30,7 @@
             default = nvim.check;  # Run with `nix flake check`
           };
           devShells = {
-	    default = pkgs.mkShell {
+	    default = pkgs.mkShellNoCC {
 	      buildInputs = [
 			pkgs.ripgrep
 			pkgs.fd
