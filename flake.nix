@@ -35,9 +35,10 @@
 			pkgs.ripgrep
 			pkgs.fd
 			nvim.package
+			pkgs.git
 			pkgs.binsider
 	      ] ++ (if pkgs.lib.hasSuffix "-linux" system then [
-            		pkgs.gef
+			pkgs.pwndbg
               ] else []);
 	  };
           };

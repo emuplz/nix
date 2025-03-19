@@ -9,13 +9,13 @@ _: {
 
     # Completion
     #./plugins/cmp/cmp.nix
-    #./plugins/cmp/autopairs.nix
 
     # Editor
     ./plugins/editor/treesitter.nix
     ./plugins/editor/todo-comments.nix
     ./plugins/editor/flash.nix
     ./plugins/editor/autopairs.nix
+    ./plugins/editor/sleuth.nix
 
     # LSP
     ./plugins/lsp/lsp.nix
