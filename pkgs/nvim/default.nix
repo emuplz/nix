@@ -8,7 +8,6 @@ let
     inherit system;
     module = {
       imports = [ ./config ];
-      package = inputs.neovim-nightly-overlay.packages.${system}.default;
     };
     extraSpecialArgs = {};
   };
