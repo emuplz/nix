@@ -17,6 +17,9 @@ _: {
     ./plugins/editor/autopairs.nix
     ./plugins/editor/sleuth.nix
 
+    # AI
+    ./plugins/ai/copilot.nix
+
     # LSP
     ./plugins/lsp/lsp.nix
     ./plugins/lsp/trouble.nix
