@@ -28,6 +28,7 @@ _: {
     ./plugins/git/neogit.nix
     ./plugins/git/gitsigns.nix
     ./plugins/git/diffview.nix
+    ./plugins/git/octo.nix
 
     # Utils
     ./plugins/utils/overseer.nix
