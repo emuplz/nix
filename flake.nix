@@ -3,8 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11";
-    nixvim.url = "github:nix-community/nixvim";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    nixvim.url = "github:nix-community/nixvim";
   };
 
   outputs =
@@ -20,7 +20,7 @@
       perSystem =
         { system, pkgs, ... }:
         let
-          nvim = pkgs.callPackage ./pkgs/nvim { inherit nixvim system inputs; };
+          nvim = pkgs.callPackage ./pkgs/nvim { inherit nixvim system pkgs; };
         in
         {
           packages = {

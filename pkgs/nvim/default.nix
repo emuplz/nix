@@ -1,11 +1,11 @@
 # packages/nvim/default.nix
-{ nixvim, system, inputs }:
+{ nixvim, system, pkgs }:
 
 let
   nixvimLib = nixvim.lib.${system};
   nixvim' = nixvim.legacyPackages.${system};
   nixvimModule = {
-    inherit system;
+    inherit pkgs;
     module = {
       imports = [ ./config ];
     };
