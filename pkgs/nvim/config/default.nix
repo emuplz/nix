@@ -7,11 +7,9 @@ _: {
     # Themes
     ./plugins/themes
 
-    # Completion
-    #./plugins/cmp/cmp.nix
-
     # Editor
     ./plugins/editor/treesitter.nix
+    ./plugins/editor/cmp.nix
     ./plugins/editor/todo-comments.nix
     ./plugins/editor/flash.nix
     ./plugins/editor/autopairs.nix
