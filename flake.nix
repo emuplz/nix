@@ -8,14 +8,10 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    pwndbg = {
-      url = "github:pwndbg/pwndbg";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
-    { pwndbg, nixpkgs, nixvim, flake-parts, ... }@inputs:
+    { nixpkgs, nixvim, flake-parts, ... }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
@@ -44,9 +40,7 @@
 			nvim.package
 			pkgs.git
 			pkgs.binsider
-	      ] ++ (if pkgs.lib.hasSuffix "-linux" system then [
-			pwndbg.packages."${system}".pwndbg
-              ] else []);
+	      ];
 	    };
           };
         };

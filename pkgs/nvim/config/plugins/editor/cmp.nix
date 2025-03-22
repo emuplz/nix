@@ -30,4 +30,8 @@
 
   plugins.blink-copilot.enable = true;
   plugins.blink-copilot.autoLoad = true;
+
+  plugins.blink-compat.enable = true;
+  plugins.blink-compat.autoLoad = true;
+  plugins.blink-compat.settings.impersonate_nvim_cmp = true;
 }
