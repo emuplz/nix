@@ -4,11 +4,18 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixvim.url = "github:nix-community/nixvim";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    pwndbg = {
+      url = "github:pwndbg/pwndbg";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    { nixpkgs, nixvim, flake-parts, ... }@inputs:
+    { pwndbg, nixpkgs, nixvim, flake-parts, ... }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
@@ -38,9 +45,9 @@
 			pkgs.git
 			pkgs.binsider
 	      ] ++ (if pkgs.lib.hasSuffix "-linux" system then [
-			pkgs.pwndbg
+			pwndbg.packages."${system}".pwndbg-gdb
               ] else []);
-	  };
+	    };
           };
         };
     };
