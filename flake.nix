@@ -45,7 +45,7 @@
 			pkgs.git
 			pkgs.binsider
 	      ] ++ (if pkgs.lib.hasSuffix "-linux" system then [
-			pwndbg.packages."${system}".pwndbg-gdb
+			pwndbg.packages."${system}".pwndbg
               ] else []);
 	    };
           };
