@@ -1,12 +1,15 @@
 {
   plugins.blink-cmp = {
     enable = true;
-    settings.sources.providers = {
-      copilot = {
-        async = true;
-        module = "blink-copilot";
-        name = "copilot";
-        score_offset = 100;
+    settings.sources = {
+      default = [ "copilot" "lsp" "buffer" "path" ];
+      providers = {
+        copilot = {
+          async = true;
+          module = "blink-cmp-copilot";
+          name = "copilot";
+          score_offset = 100;
+        };
       };
     };
   };
