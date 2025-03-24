@@ -12,13 +12,14 @@
       codecompanion = {
         name = "codecompanion";
         module = "codecompanion.providers.completion.blink";
+        score_offset = 100;
       };
     };
     settings.sources.default = [
       "lsp"
-      "path"
-      "buffer"
       "codecompanion"
+      "buffer"
+      "path"
     ];
     settings.completion = {
       ghost_text.enabled = true;

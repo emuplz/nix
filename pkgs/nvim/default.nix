@@ -9,7 +9,9 @@ let
     module = {
       imports = [ ./config ];
     };
-    extraSpecialArgs = {};
+    extraSpecialArgs = {
+        inherit pkgs;
+    };
   };
 in
 {
