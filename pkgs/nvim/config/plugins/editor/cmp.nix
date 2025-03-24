@@ -9,18 +9,18 @@
         async = true;
         score_offset = 100;
       };
-      codecompanion = {
-        name = "codecompanion";
-        module = "codecompanion.providers.completion.blink";
-        score_offset = 100;
-      };
     };
-    settings.sources.default = [
-      "lsp"
-      "codecompanion"
-      "buffer"
-      "path"
-    ];
+    settings.sources = {
+	per_filetype = {
+	    codecompanion = ["codecompanion" "path" "buffer"];
+        };
+	default = [
+          "lsp"
+          "copilot"
+          "buffer"
+          "path"
+        ];
+    };
     settings.completion = {
       ghost_text.enabled = true;
     };
