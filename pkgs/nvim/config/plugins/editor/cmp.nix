@@ -1,6 +1,7 @@
 {
   plugins.blink-cmp = {
     enable = true;
+    settings.keymap.preset = "super-tab";
     settings.sources.providers = {
       copilot = {
         name = "copilot";
@@ -15,9 +16,9 @@
     };
     settings.sources.default = [
       "lsp"
-      "copilot"
-      "buffer"
       "path"
+      "buffer"
+      "codecompanion"
     ];
     settings.completion = {
       ghost_text.enabled = true;

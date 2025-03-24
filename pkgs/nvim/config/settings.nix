@@ -49,8 +49,6 @@
 
       # Enable 24-bit RGB color in the TUI
       termguicolors = true;
-
-      completeopt = "menu,noinsert,preview";
     };
   };
 }
