@@ -1,4 +1,9 @@
+{ pkgs, ... }:
 {
+  extraPlugins = with pkgs.vimPlugins; [
+    blink-cmp-avante
+  ];
+
   plugins.blink-cmp = {
     enable = true;
     settings.keymap.preset = "super-tab";
@@ -9,20 +14,25 @@
         async = true;
         score_offset = 100;
       };
+      avante = {
+        name = "Avante";
+        module = "blink-cmp-avante";
+      };
     };
     settings.sources = {
-	per_filetype = {
-	    codecompanion = ["codecompanion" "path" "buffer"];
-        };
 	default = [
           "lsp"
           "copilot"
           "buffer"
           "path"
+          "avante"
         ];
     };
     settings.completion = {
       ghost_text.enabled = true;
+    };
+    settings.completion.menu = {
+      winblend = 30;
     };
   };
 
