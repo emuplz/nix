@@ -5,6 +5,9 @@
 			enable = true;
 			settings = {
 				provider = "copilot";
+				copilot = {
+					model = "o3-mini";
+				};
 				behaviour = {
 					auto_suggestions = false;
 					auto_set_highlight_group = true;
