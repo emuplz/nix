@@ -6,7 +6,7 @@
 			settings = {
 				provider = "copilot";
 				copilot = {
-					model = "o1-preview";
+					model = "o3-mini";
 				};
 				behaviour = {
 					auto_suggestions = false;
