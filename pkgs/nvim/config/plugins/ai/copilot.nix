@@ -19,7 +19,19 @@
 				file_selector = {
 					provider = "telescope";
 					provider_opts = {
-						find_command = ["rg" "--files"];
+						get_filepaths.__raw = ''
+							function(params)
+								local cwd = params.cwd ---@type string
+								local selected_filepaths = params.selected_filepaths ---@type string[]
+								local cmd = string.format("rg --files --hidden -g !.git")
+								local output = vim.fn.system(cmd)
+								local filepaths = vim.split(output, "\n", { trimempty = true })
+								return vim.iter(filepaths):filter(function(filepath)
+										return not vim.tbl_contains(selected_filepaths, filepath)
+									end
+								):totable()
+							 end
+								 '';
 					};
 				};
 			};
