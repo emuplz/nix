@@ -6,7 +6,7 @@
 			settings = {
 				provider = "copilot";
 				copilot = {
-					model = "o3-mini";
+					model = "o1-preview";
 				};
 				behaviour = {
 					auto_suggestions = false;
@@ -18,7 +18,9 @@
 				hints.enabled = false;
 				file_selector = {
 					provider = "telescope";
-					provider_opts = { };
+					provider_opts = {
+						find_command = ["rg" "--files"];
+					};
 				};
 			};
 		};
