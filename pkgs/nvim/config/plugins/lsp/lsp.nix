@@ -7,6 +7,7 @@
       servers = {
         bashls.enable = true;
         clangd.enable = true;
+        terraformls.enable = true;
         nixd.enable = true;
 	rust_analyzer = {
           enable = true;
@@ -21,10 +22,6 @@
         "gi" = "implementation";
         "K" = "hover";
       };
-    };
-    lsp-format = {
-      enable = true;
-      lspServersToEnable = "all";
     };
   };
 }
