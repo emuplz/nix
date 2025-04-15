@@ -6,7 +6,7 @@
 			settings = {
 				provider = "copilot";
 				copilot = {
-					model = "o3-mini";
+					model = "gpt-4.1";
 				};
 				behaviour = {
 					auto_suggestions = false;
