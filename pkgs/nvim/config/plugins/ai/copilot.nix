@@ -19,22 +19,41 @@
               ];
 			};
 			settings = {
-				provider = "copilot_o3_mini";
+				provider = "copilot";
+				openai = {
+					hide_in_model_selector = true;
+				};
 				copilot = {
-					model = "o3";
+					model = "gpt-4o";
 				};
 				vendors = {
-					copilot_o3 = {
+					copilot-o3 = {
 						__inherited_from = "copilot";
 						model = "o3";
 					};
-					copilot_o4_mini = {
+					copilot-o4-mini = {
 						__inherited_from = "copilot";
 						model = "o4-mini";
 					};
-					copilot_o3_mini = {
+					copilot-o3-mini = {
 						__inherited_from = "copilot";
 						model = "o3-mini";
+					};
+					copilot-gpt-4o = {
+						__inherited_from = "copilot";
+						model = "gpt-4o";
+					};
+					copilot-claude-sonnet = {
+						__inherited_from = "copilot";
+						model = "claude-3.7-sonnet";
+					};
+					copilot-claude-sonnet-thought = {
+						__inherited_from = "copilot";
+						model = "claude-3.7-sonnet-thought";
+					};
+					copilot-o1 = {
+						__inherited_from = "copilot";
+						model = "o1";
 					};
 				};
 				behaviour = {
