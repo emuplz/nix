@@ -14,6 +14,7 @@
     ./plugins/editor/flash.nix
     ./plugins/editor/autopairs.nix
     ./plugins/editor/sleuth.nix
+    ./plugins/editor/zk.nix
 
     # AI
     ./plugins/ai/copilot.nix

@@ -1,0 +1,3 @@
+{
+	plugins.zk.enable = true;
+}

@@ -40,6 +40,7 @@
 			nvim.package
 			pkgs.git
 			pkgs.binsider
+                        pkgs.zk
 	      ];
 	    };
           };
