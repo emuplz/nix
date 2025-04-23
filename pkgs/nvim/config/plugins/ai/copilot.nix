@@ -3,10 +3,39 @@
 	plugins = {
 		avante = {
 			enable = true;
+            package = pkgs.vimPlugins.avante-nvim.overrideAttrs {
+				version = "main";
+				src = pkgs.fetchFromGitHub {
+				  owner = "yetone";
+				  repo = "avante.nvim";
+				  rev = "1c8cac1958cdf04b65942f23fa5a14cc4cfae44e";
+				  hash = "sha256-UXt8c2esrAE9SzaQGRGZ4hdkKsYuo1Ftvn+JR80W15I=";
+              };
+                                 nvimSkipModule = [
+                "avante.providers.ollama"
+                "avante.providers.vertex_claude"
+                "avante.providers.azure"
+                "avante.providers.copilot"
+              ];
+			};
 			settings = {
-				provider = "copilot";
+				provider = "copilot_o3_mini";
 				copilot = {
-					model = "gpt-4.1";
+					model = "o3";
+				};
+				vendors = {
+					copilot_o3 = {
+						__inherited_from = "copilot";
+						model = "o3";
+					};
+					copilot_o4_mini = {
+						__inherited_from = "copilot";
+						model = "o4-mini";
+					};
+					copilot_o3_mini = {
+						__inherited_from = "copilot";
+						model = "o3-mini";
+					};
 				};
 				behaviour = {
 					auto_suggestions = false;

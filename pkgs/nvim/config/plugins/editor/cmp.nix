@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   extraPlugins = with pkgs.vimPlugins; [
-    blink-cmp-avante
+#    blink-cmp-avante
   ];
 
   plugins.blink-cmp = {
@@ -14,18 +14,32 @@
         async = true;
         score_offset = 100;
       };
-      avante = {
-        name = "Avante";
-        module = "blink-cmp-avante";
+      avante_commands = {
+        name = "avante_commands";
+        module = "blink.compat.source";
+        score_offset = 90;
+      };
+      avante_files = {
+        name = "avante_files";
+        module = "blink.compat.source";
+        score_offset = 100;
+      };
+      avante_mentions = {
+        name = "avante_mentions";
+        module = "blink.compat.source";
+        score_offset = 1000;
       };
     };
+
     settings.sources = {
 	default = [
           "lsp"
           "copilot"
           "buffer"
           "path"
-          "avante"
+          "avante_commands"
+          "avante_files"
+          "avante_mentions"
         ];
     };
     settings.completion = {
