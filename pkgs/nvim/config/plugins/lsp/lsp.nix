@@ -21,6 +21,8 @@
         "gt" = "type_definition";
         "gi" = "implementation";
         "K" = "hover";
+        "<leader>cr" = "rename";
+        "<leader>ca" = "code_action";
       };
     };
   };

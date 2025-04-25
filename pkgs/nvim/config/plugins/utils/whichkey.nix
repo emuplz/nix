@@ -18,6 +18,18 @@
 			__unkeyed-1 = "<leader>c";
 			group = "[C]ode";
 		}
+		{
+			__unkeyed-1 = "<leader>a";
+			group = "[A]I";
+		}
+		{
+			__unkeyed-1 = "<leader>b";
+			group = "[B]uffer";
+		}
+		{
+			__unkeyed-1 = "<leader>f";
+			group = "[F]ind";
+		}
 		];
 	};
 }

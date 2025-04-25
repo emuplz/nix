@@ -15,9 +15,10 @@
     ./plugins/editor/autopairs.nix
     ./plugins/editor/sleuth.nix
     ./plugins/editor/zk.nix
+    ./plugins/editor/org.nix
 
     # AI
-    ./plugins/ai/copilot.nix
+    ./plugins/ai/avante.nix
 
     # LSP
     ./plugins/lsp/lsp.nix

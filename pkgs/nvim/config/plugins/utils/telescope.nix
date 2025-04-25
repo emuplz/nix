@@ -18,7 +18,7 @@
     };
     keymaps = {
       "<leader><space>" = {
-        action = "find_files";
+        action = "git_files";
         options = {
           desc = "Find project files";
         };
