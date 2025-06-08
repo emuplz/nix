@@ -1,4 +1,4 @@
-{ lib, ... }: {
+{ ... }: {
   imports = [
     # General Configuration
     ./settings.nix
@@ -13,12 +13,9 @@
     ./plugins/editor/todo-comments.nix
     ./plugins/editor/flash.nix
     ./plugins/editor/autopairs.nix
-    ./plugins/editor/sleuth.nix
-    ./plugins/editor/zk.nix
-    ./plugins/editor/org.nix
 
-    # AI
-    ./plugins/ai/avante.nix
+    ./plugins/editor/sleuth.nix
+    ./plugins/editor/tmux-navigator.nix
 
     # LSP
     ./plugins/lsp/lsp.nix
@@ -32,7 +29,7 @@
 
     # Utils
     ./plugins/utils/overseer.nix
-    ./plugins/utils/telescope.nix
+    ./plugins/utils/fzf-lua.nix
     ./plugins/utils/whichkey.nix
   ];
 }

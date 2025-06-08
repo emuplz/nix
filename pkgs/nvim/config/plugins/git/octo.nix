@@ -1,6 +1,10 @@
 {
-	plugins.octo.enable = true;
-	
+	plugins.octo = {
+		enable = true;
+		settings = {
+			picker = "fzf-lua";
+		};
+	};	
 	keymaps = [
 		{
 			mode = "n";

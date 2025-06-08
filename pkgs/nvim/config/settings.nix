@@ -1,5 +1,4 @@
 {
-  config = {
     opts = {
       # Show line numbers
       number = true;
@@ -14,8 +13,11 @@
       tabstop = 4;
       softtabstop = 4;
 
+      list = true;
+      listchars = "tab:» ,lead:·,trail:·";
+
       # Show tabline always
-      showtabline = 2;
+      showtabline = 1;
 
       # Use spaces instead of tabs
       expandtab = true;
@@ -31,9 +33,9 @@
 
       # Highlight the screen line of the cursor
       cursorline = true;
-
+      
       # Minimum number of screen lines to keep above and below the cursor
-      scrolloff = 8;
+      scrolloff = 999;
 
       # Enable mouse support
       mouse = "a";
@@ -51,6 +53,10 @@
       termguicolors = true;
 
       laststatus = 3;
+
+      # Disable cmdline
+      cmdheight = 0;
     };
-  };
+
+    luaLoader.enable = true;
 }

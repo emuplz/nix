@@ -1,0 +1,580 @@
+#+title: Emacs Configuration
+#+PROPERTY: header-args:emacs-lisp :tangle yes
+
+#+begin_src emacs-lisp
+;;; -*- lexical-binding: t; no-byte-compile: t -*-
+#+end_src
+
+* Performance
+** Core
+#+begin_src emacs-lisp
+
+  (defun efs/display-startup-time ()
+    (message "Emacs loaded in %s with %d garbage collections."
+             (format "%.2f seconds"
+                     (float-time
+                      (time-subtract after-init-time before-init-time)))
+             gcs-done))
+
+  (add-hook 'emacs-startup-hook #'efs/display-startup-time)
+
+  ;; Increase for LSP responses
+  (setq read-process-output-max (* 1024 1024))  
+
+  ;; Reset gc-cons-threshold lower after startup for better performance
+  (setq gc-cons-threshold (* 50 1000 1000))
+  (add-hook 'emacs-startup-hook (lambda () (setq gc-cons-threshold (* 2 1000 1000))))
+#+end_src
+
+** TRAMP
+#+begin_src emacs-lisp
+
+  (use-package tramp
+    :ensure t
+    :config
+    (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+    (setq tramp-verbose 1)
+    (setq tramp-copy-size-limit (* 5 1024 1024))  ; 5MB threshold for external copying
+    
+    (setq tramp-inline-compress-start-size (* 2 1024 1024))  ; Compress files > 2MB
+    (setq tramp-chunksize (* 8 1024))
+    (setq remote-file-name-inhibit-cache nil)
+    (setq tramp-use-ssh-controlmaster-options nil))
+
+  (connection-local-set-profile-variables
+   'remote-direct-async-process
+   '((tramp-direct-async-process . t)))
+  (connection-local-set-profiles
+   '(:application tramp :protocol "sshx")
+   'remote-direct-async-process)
+
+#+end_src
+
+* User Interface
+** Core
+#+begin_src emacs-lisp
+  (setq inhibit-startup-message t)
+  ;; Core modes
+  (repeat-mode 1)                ;; Enable repeating key maps
+  (menu-bar-mode 0)              ;; Hide the menu bar
+  (tool-bar-mode 0)              ;; Hide the tool bar
+  (savehist-mode 1)              ;; Save minibuffer history
+  (scroll-bar-mode 0)            ;; Hide the scroll bar
+  (xterm-mouse-mode 1)           ;; Enable mouse events in terminal Emacs
+  (display-time-mode 1)          ;; Display time in mode line / tab bar
+  (column-number-mode 1)         ;; Show column number on mode line
+  (tab-bar-history-mode 1)       ;; Remember previous tab window configurations
+  (auto-save-visited-mode 1)     ;; Auto-save files at an interval
+  (global-visual-line-mode 1)    ;; Visually wrap long lines in all buffers
+  (global-auto-revert-mode 1)    ;; Refresh buffers with changed local files
+
+  (column-number-mode)
+  (setq display-line-numbers-type 'relative)
+  (global-display-line-numbers-mode)
+
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+  (when (eq system-type 'darwin)
+    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+    (add-to-list 'default-frame-alist '(ns-appearance . dark))
+    (setq ns-use-proxy-icon nil)
+    (select-frame-set-input-focus (selected-frame)))
+#+end_src
+
+** Theme (+ modeline)
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :init (load-theme 'doom-moonlight t))
+
+  (use-package doom-modeline
+    :ensure t
+    :init (doom-modeline-mode 1))
+#+end_src
+
+** dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+  :ensure t
+  :config
+  (dashboard-setup-startup-hook)
+  (setq dashboard-items '((recents  . 5)
+                          (bookmarks . 5)
+                          (projects  . 5)
+                          (agenda    . 5)))
+  (setq dashboard-projects-backend 'projectile)
+  (setq dashboard-startup-banner 'logo)
+  (setq dashboard-center-content t)
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t))
+#+end_src
+
+** evil ─ modal editing
+#+begin_src emacs-lisp
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-keybinding nil)
+  :config 
+  (evil-mode 1)
+  ;; Evil-specific keybindings can go here
+  )
+#+end_src
+
+** evil-collection ─ unify keys across built-ins & packages
+#+begin_src emacs-lisp
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config (evil-collection-init))
+#+end_src
+
+** which-key ─ pop-up key-hints (optional but handy)
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :config
+  (setq which-key-sort-order #'which-key-key-order-alpha
+        which-key-sort-uppercase-first nil
+        which-key-add-column-padding 1
+        which-key-max-display-columns nil
+        which-key-min-display-lines 6
+        which-key-side-window-slot -10)
+  (which-key-setup-side-window-bottom)
+  (defun +which-key-set-line-spaceing-fn ()
+    "Set `which-key' line spacing"
+    (setq line-spacing 3))
+  (add-hook 'which-key-init-buffer-hook #'+which-key-set-line-spaceing-fn)
+  (which-key-mode 1))
+#+end_src
+
+** general.el ─ define the Doom-style leader
+#+begin_src emacs-lisp
+  (use-package general
+    :ensure t
+    :after evil
+    :init
+    (general-create-definer +leader
+      :states '(normal visual motion emacs)
+      :keymaps 'override
+      :prefix  "SPC"
+      :global-prefix "C-SPC")
+    :config
+    (general-evil-setup t)
+    ;;────────────────────────────────  SPC  - top level ──────────────────────────
+    (+leader
+     "SPC" '(projectile-find-file      :wk "Find file")
+     "/"   '(consult-ripgrep           :wk "Search project")
+     ":"   '(execute-extended-command  :wk "M-x")
+     ";"   '(pp-eval-expression        :wk "Eval")
+     "<"   '(switch-to-buffer          :wk "Switch buffer")
+    "."   '(find-file   :wk "Find file"))
+    ;;────────────────────────────────  SPC g  ─ git ----──────────────────────────
+    (+leader
+     "g"  '(:ignore t :wk "Git"))
+    ;;────────────────────────────────  SPC w  ─ windows ──────────────────────────
+    (+leader
+     "w"  '(evil-window-map :wk "windows"))
+    ;;────────────────────────────────  SPC f  ─ files ────────────────────────────
+    (+leader
+     "f"  '(:ignore t           :wk "Files")
+     "ff" '(find-file           :wk "Find file")
+     "fr" '(recentf-open-files  :wk "Recent")
+     "fs" '(save-buffer         :wk "Save")
+     "fR" '(rename-file         :wk "Rename")
+     "fc" '(copy-file           :wk "Copy"))
+
+    ;;────────────────────────────────  SPC b  ─ buffers ──────────────────────────
+    (+leader
+     "b"  '(:ignore t         :wk "Buffers")
+     "bb" '(switch-to-buffer  :wk "Switch buffer")
+     "bn" '(next-buffer       :wk "Next buffer")
+     "bp" '(previous-buffer   :wk "Previous buffer")
+     "bk" '(kill-this-buffer  :wk "Kill buffer")
+     "bB" '(ibuffer           :wk "ibuffer"))
+    
+    ;;────────────────────────────────  SPC p  ─ projects ─────────────────────────
+    (+leader
+    "p"  '(:ignore t                   :wk "Project")
+    "pp" '(projectile-switch-project   :wk "Switch project")
+    "pf" '(projectile-find-file        :wk "Find file in project")
+    "pd" '(projectile-dired            :wk "Dired root")
+    "pb" '(projectile-switch-to-buffer :wk "Switch buffer")
+    "pk" '(projectile-kill-buffers     :wk "Cleanup")
+    "pc" '(projectile-compile-project  :wk "Compile")
+    "pi" '(projectile-invalidate-cache :wk "Invalidate cache")))
+
+#+end_src
+
+* Editor
+** Minibuffer
+#+begin_src emacs-lisp
+(use-package vertico
+  :ensure t
+  :custom
+  (vertico-resize nil)
+  (vertico-cycle t)
+  :init (vertico-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package marginalia
+  :ensure t
+  :init 
+  (setq marginalia-command-categories
+        '((projectile-find-file . project-file)
+          (projectile-find-dir . project-file)
+          (projectile-switch-project . file)))
+  (marginalia-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package orderless
+  :ensure t
+  :init
+  (setq orderless-component-separator #'orderless-escapable-split-on-space
+        completion-styles '(orderless basic)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package consult
+  :ensure t
+  :after vertico
+  :hook (completion-list-mode . consult-preview-at-point-mode)
+  :init
+  (setq register-preview-delay 0.2
+        register-preview-function #'consult-register-format)
+  :config
+  (autoload 'projectile-project-root "projectile")
+  (setq consult-project-function (lambda (_) (projectile-project-root)))
+  
+  :custom
+  (consult-fontify-preserve nil)
+  (consult-async-min-input 2)
+  (consult-narrow-key ">")
+  (consult-async-refresh-delay 0.15)
+  (consult-async-input-throttle 0.2)
+  (consult-async-input-debounce 0.2)
+  (completion-in-region-function #'consult-completion-in-region)
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref))
+#+end_src
+
+** Text completion
+*** corfu ─ popup completion at point
+#+begin_src emacs-lisp
+  (use-package corfu
+    :ensure t
+    :custom
+    (corfu-auto t)                 ; show menu as soon as you type
+    (corfu-cycle t)                ; Tab cycles candidates
+    :config (global-corfu-mode 1))
+#+end_src
+
+** Languages
+*** Markdown
+#+begin_src emacs-lisp
+  (use-package markdown-mode :ensure t)
+#+end_src
+
+*** Nix
+#+begin_src emacs-lisp
+  (use-package nix-mode
+    :ensure t
+    :mode "\\.nix\\'")
+#+end_src
+*** Rust
+#+begin_src emacs-lisp
+  (use-package rust-mode :ensure t)
+#+end_src
+
+** LSP
+#+begin_src emacs-lisp
+(use-package eglot
+  :ensure t
+  :defer t
+  :hook ((c-mode . eglot-ensure)
+         (c++-mode . eglot-ensure))
+  :init
+  (setq eglot-sync-connect 0))
+
+(use-package flycheck-eglot
+  :ensure t)
+(use-package consult-eglot
+  :ensure t)
+(use-package consult-eglot-embark
+  :ensure t
+  :config
+  (consult-eglot-embark-mode))
+#+end_src
+
+* Tools
+** magit
+#+begin_src emacs-lisp
+
+  (use-package magit
+    :ensure t
+    :hook
+    (git-commit-mode . evil-insert-state)
+    :config
+    (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+
+    ;; Clean up after magit by killing leftover magit buffers and reverting
+    ;; affected buffers (or at least marking them as need-to-be-reverted).
+    (define-key magit-mode-map "q" #'+magit/quit)
+    (define-key magit-mode-map "Q" #'+magit/quit-all)
+    ;; Close transient with ESC
+    (define-key transient-map [escape] #'transient-quit-one)
+    :general
+    (+leader
+      ;; Top-level git commands
+      "g/" #'(magit-dispatch :wk "Magit dispatch")
+      "g." #'(magit-file-dispatch :wk "File dispatch")
+      "g'" #'(forge-dispatch :wk "Forge dispatch")
+      "gb" #'(magit-branch-checkout :wk "Checkout branch")
+      "gB" #'(magit-blame-addition :wk "Blame")
+      "gC" #'(magit-clone :wk "Clone")
+      "gD" #'(magit-file-delete :wk "Delete file")
+      "gF" #'(magit-fetch :wk "Fetch")
+      "gg" #'(magit-status :wk "Status")
+      "gG" #'(magit-status-here :wk "Status here")
+      "gR" #'(vc-revert :wk "Revert file")
+      "gS" #'(magit-file-stage :wk "Stage file")
+      "gU" #'(magit-file-unstage :wk "Unstage file")
+      "gw" #'(magit-worktree :wk "Worktree")
+      
+      ;; Find prefix
+      "gf"  '(:ignore t :wk "Find")
+      "gff" #'(magit-find-file :wk "Find file")
+      "gfg" #'(magit-find-git-config-file :wk "Find gitconfig")
+      "gfc" #'(magit-show-commit :wk "Find commit")
+      "gfi" #'(forge-visit-issue :wk "Find issue")
+      "gfp" #'(forge-visit-pullreq :wk "Find pull request")
+      
+      ;; Open in browser prefix
+      "go"  '(:ignore t :wk "Open in browser")
+      "gor" #'(forge-browse-remote :wk "Browse remote")
+      "goc" #'(forge-browse-commit :wk "Browse commit")
+      "goi" #'(forge-browse-issue :wk "Browse issue")
+      "gop" #'(forge-browse-pullreq :wk "Browse pull request")
+      "goI" #'(forge-browse-issues :wk "Browse issues")
+      "goP" #'(forge-browse-pullreqs :wk "Browse pull requests")
+      
+      ;; List prefix
+      "gl"  '(:ignore t :wk "List")
+      "glr" #'(magit-list-repositories :wk "Repositories")
+      "gls" #'(magit-list-submodules :wk "Submodules")
+      "gli" #'(forge-list-issues :wk "Issues")
+      "glp" #'(forge-list-pullreqs :wk "Pull requests")
+      "gln" #'(forge-list-notifications :wk "Notifications")
+      "glL" #'(magit-log-buffer-file :wk "Buffer log")
+      "gl." #'(magit-log :wk "Log")
+      
+      ;; Create prefix
+      "gc"  '(:ignore t :wk "Create")
+      "gcr" #'(magit-init :wk "Init repo")
+      "gcR" #'(magit-clone :wk "Clone repo")
+      "gcc" #'(magit-commit-create :wk "Commit")
+      "gcf" #'(magit-commit-fixup :wk "Fixup commit")
+      "gcb" #'(magit-branch-and-checkout :wk "Branch")
+      "gci" #'(forge-create-issue :wk "Issue")
+      "gcp" #'(forge-create-pullreq :wk "Pull request")))
+
+  (use-package forge
+    :ensure t
+    :after magit
+    :init
+    (setq forge-add-default-bindings nil))
+
+#+end_src
+
+** diff-hl
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :ensure t
+    :hook
+    (magit-pre-refresh  . diff-hl-magit-pre-refresh)
+    (magit-post-refresh . diff-hl-magit-post-refresh)
+    ((after-init . global-diff-hl-mode)
+    (after-init . global-diff-hl-show-hunk-mouse-mode)
+    (dired-mode . diff-hl-dired-mode))
+    :config
+
+    (setq-default fringes-outside-margins t)
+    (setq diff-hl-draw-borders nil)
+    (setq diff-hl-ask-before-revert-hunk nil)
+    (setq diff-hl-update-async t)
+
+    (+leader
+      "gh" #'(diff-hl-diff-goto-hunk :wk "Jump hunk")
+      "gn" #'(diff-hl-next-hunk :wk "Next hunk")
+      "gp" #'(diff-hl-previous-hunk :wk "Previous hunk")
+      "gr" #'(diff-hl-revert-hunk :wk "Revert hunk"))
+      
+    (diff-hl-flydiff-mode 1))
+      
+#+end_src
+
+** projectile ─ 
+#+begin_src emacs-lisp
+  (use-package projectile
+    :ensure t
+    :config
+    (setq projectile-indexing-method 'alien)
+    (setq projectile-enable-caching 'persistent)
+    ;; HACK: Projectile cleans up the known projects list at startup. If this list
+    ;;   contains tramp paths, the `file-remote-p' calls will pull in tramp via
+    ;;   its `file-name-handler-alist' entry, which is expensive. Since Doom
+    ;;   already cleans up the project list on kill-emacs-hook, it's simplest to
+    ;;   inhibit this cleanup process at startup (see bbatsov/projectile#1649).
+    (cl-letf (((symbol-function 'projectile--cleanup-known-projects) #'ignore))
+      (projectile-mode 1))
+
+    (add-hook 'kill-emacs-hook #'projectile--cleanup-known-projects))
+#+end_src
+** denote
+#+begin_src emacs-lisp
+  (use-package denote
+    :ensure t
+    :hook (dired-mode . denote-dired-mode)
+    :bind
+    (("C-c n n" . denote)
+     ("C-c n r" . denote-rename-file)
+     ("C-c n l" . denote-link)
+     ("C-c n b" . denote-backlinks)
+     ("C-c n d" . denote-dired))
+    :config
+    (setq denote-directory (expand-file-name "~/notes"))
+    (denote-rename-buffer-mode 1))
+
+  (use-package consult-denote
+  :ensure t
+  :bind
+  (("C-c n f" . consult-denote-find)
+   ("C-c n g" . consult-denote-grep))
+  :config
+  (consult-denote-mode 1))
+#+end_src
+** direnv
+#+begin_src emacs-lisp
+(use-package direnv
+  :ensure t
+  :config
+  (direnv-mode))
+#+end_src
+
+** org
+#+begin_src emacs-lisp
+    (use-package org
+      :ensure nil
+      :config
+      (setq org-directory "~/org")
+      (setq org-agenda-files (list "inbox.org" "agenda.org" "notes.org" "projects.org" "calendar-beorg.org"))
+
+      ;; Capture
+      (setq org-capture-templates
+    	`(("i" "Inbox" entry  (file "inbox.org")
+               ,(concat "* TODO %?\n"
+                        "/Entered on/ %U"))
+              ("m" "Meeting" entry  (file+headline "agenda.org" "Future")
+               ,(concat "* %? :meeting:\n"
+                        "<%<%Y-%m-%d %a %H:00>>"))
+              ("n" "Note" entry  (file "notes.org")
+               ,(concat "* Note (%a)\n"
+                        "/Entered on/ %U\n" "\n" "%?"))
+              ("@" "Inbox [mu4e]" entry (file "inbox.org")
+               ,(concat "* TODO Reply to \"%a\" %?\n"
+                        "/Entered on/ %U"))))
+
+      (defun org-capture-inbox ()
+        (interactive)
+        (call-interactively 'org-store-link)
+        (org-capture nil "i"))
+
+      (defun org-capture-mail ()
+        (interactive)
+        (call-interactively 'org-store-link)
+        (org-capture nil "@"))
+
+      ;; Use full window for org-capture
+      (add-hook 'org-capture-mode-hook 'delete-other-windows)
+
+      ;; Key bindings
+      (define-key global-map            (kbd "C-c a") 'org-agenda)
+      (define-key global-map            (kbd "C-c c") 'org-capture))(define-key global-map            (kbd "C-c i") 'org-capture-inbox)
+
+    ;; Only if you use mu4e
+    ;; (require 'mu4e)
+    ;; (define-key mu4e-headers-mode-map (kbd "C-c i") 'org-capture-mail)
+    ;; (define-key mu4e-view-mode-map    (kbd "C-c i") 'org-capture-mail)
+
+    ;; Refile
+    (setq org-refile-use-outline-path 'file)
+    (setq org-outline-path-complete-in-steps nil)
+    (setq org-refile-targets
+          '(("projects.org" :regexp . "\\(?:\\(?:Note\\|Task\\)s\\)")))
+
+    ;; TODO
+    (setq org-todo-keywords
+          '((sequence "TODO(t)" "NEXT(n)" "HOLD(h)" "|" "DONE(d)")))
+    (defun log-todo-next-creation-date (&rest ignore)
+      "Log NEXT creation time in the property drawer under the key 'ACTIVATED'"
+      (when (and (string= (org-get-todo-state) "NEXT")
+                 (not (org-entry-get nil "ACTIVATED")))
+        (org-entry-put nil "ACTIVATED" (format-time-string "[%Y-%m-%d]"))))
+    (add-hook 'org-after-todo-state-change-hook #'log-todo-next-creation-date)
+
+    ;; Agenda
+    (setq org-agenda-custom-commands
+          '(("g" "Get Things Done (GTD)"
+             ((agenda ""
+                      ((org-agenda-skip-function
+                        '(org-agenda-skip-entry-if 'deadline))
+                       (org-deadline-warning-days 0)))
+              (todo "NEXT"
+                    ((org-agenda-skip-function
+                      '(org-agenda-skip-entry-if 'deadline))
+                     (org-agenda-prefix-format "  %i %-12:c [%e] ")
+                     (org-agenda-overriding-header "\nTasks\n")))
+              (agenda nil
+                      ((org-agenda-entry-types '(:deadline))
+                       (org-agenda-format-date "")
+                       (org-deadline-warning-days 7)
+                       (org-agenda-skip-function
+                        '(org-agenda-skip-entry-if 'notregexp "\\* NEXT"))
+                       (org-agenda-overriding-header "\nDeadlines")))
+              (tags-todo "inbox"
+                         ((org-agenda-prefix-format "  %?-12t% s")
+                          (org-agenda-overriding-header "\nInbox\n")))
+              (tags "CLOSED>=\"<today>\""
+                    ((org-agenda-overriding-header "\nCompleted today\n")))))))
+
+  ;; org-habit tracks habits in the agenda view.
+  ;; It is built in to emacs but it must be loaded.
+  (use-package org-habit
+    :ensure nil
+    :after org
+    :init
+    (setq org-habit-graph-column 60)
+    :config
+    (add-to-list 'org-modules 'org-habit))
+#+end_src
+
+** org-drill
+#+begin_src emacs-lisp
+(use-package org-drill :ensure t)
+#+end_src
+** aider
+#+begin_src emacs-lisp
+  (use-package aidermacs
+    :ensure t
+    :general
+    (+leader "a" #'(aidermacs-transient-menu :wk "Aider"))
+    :custom
+    (aidermacs-show-diff-after-change nil)
+    (aidermacs-use-architect-mode t)
+    (aidermacs-default-model "openai/gpt-4.1")
+    (aidermacs-architect-model "openai/o3-mini"))
+#+end_src

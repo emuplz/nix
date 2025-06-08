@@ -5,7 +5,7 @@
 		{
 			mode = "n";
 			key = "<leader>st";
-			action = "<cmd>TodoTelescope<CR>";
+			action = "<cmd>TodoFzfLua<CR>";
 			options = {
 				desc = "Search TODOs";
 			};

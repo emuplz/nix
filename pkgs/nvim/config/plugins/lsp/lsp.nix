@@ -1,12 +1,23 @@
-{ pkgs, ... }:
+{ ... }:
 
 {
+  diagnostic.settings = {
+    virtual_text = true;
+    underline = true;
+    update_in_insert = true;
+    signs = false;
+  };
   plugins = {
+
     lsp = {
-      enable = true;
       servers = {
         bashls.enable = true;
         clangd.enable = true;
+        gh_actions_ls = {
+          enable = true;
+          package = null;
+        };
+        jsonls.enable = true;
         terraformls.enable = true;
         nixd.enable = true;
 	rust_analyzer = {

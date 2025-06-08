@@ -1,5 +1,0 @@
-{
-	plugins.orgmode = {
-		enable = true;
-	};
-}

@@ -1,6 +1,7 @@
 {
 	plugins.which-key = {
 		enable = true;
+		settings.preset = "modern";
 		settings.spec = [
 		{
 			__unkeyed-1 = "<leader>g";
