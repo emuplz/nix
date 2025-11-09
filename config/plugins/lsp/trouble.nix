@@ -1,5 +1,5 @@
 { pkgs, ... }:
 
 {
-	plugins.trouble.enable = true;
+	plugins.trouble.enable = false;
 }

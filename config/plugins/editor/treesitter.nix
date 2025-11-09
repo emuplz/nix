@@ -1,6 +1,3 @@
 {
-  plugins = {
-    treesitter.enable = true;
-    treesitter-context.enable = true;
-  };
+  plugins.treesitter.enable = true;
 }
