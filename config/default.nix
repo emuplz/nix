@@ -5,8 +5,6 @@ _: {
 
     ./plugins/themes
 
-    ./plugins/ai/sidekick.nix
-
     ./plugins/editor/treesitter.nix
     ./plugins/editor/treesitter-context.nix
 
@@ -22,8 +20,6 @@ _: {
     ./plugins/git/neogit.nix
     ./plugins/git/gitsigns.nix
     ./plugins/git/diffview.nix
-
-    ./plugins/pkm/obsidian.nix
 
     ./plugins/utils/overseer.nix
     ./plugins/utils/telescope.nix

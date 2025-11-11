@@ -30,7 +30,9 @@
               # inherit (inputs) foo;
             };
           };
-          nvim = nixvim'.makeNixvimWithModule nixvimModule;
+          nvim = (nixvim'.makeNixvimWithModule nixvimModule).overrideAttrs (_: {
+            pname = "neovim";
+          });
         in
         {
           checks = {
