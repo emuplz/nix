@@ -2,3 +2,6 @@
 
 sh <(curl -L https://nixos.org/nix/install) --no-daemon --yes
 
+echo "export NIX_CONFIG='experimental-features = nix-command flakes'" >> ~/.bashrc
+echo "source ~/.nix-profile/etc/profile.d/nix.sh" >> ~/.bashrc
+
